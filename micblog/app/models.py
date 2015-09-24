@@ -10,6 +10,28 @@ class User(db.Model):
 	role = db.Column(db.SmallInteger, default = ROLE_USER)
  	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 	
+	def is_authenticated(self):
+		return True
+
+	def is_activate(self):
+		return True
+	
+	def is_anonymous(self):
+		return False
+
+	def get_id(self):
+		return unicode(self.id)
+
+	@classmethod
+	def login_check(cls, user_name):
+		user = cls.query.filter(
+			db.or_(User.nickname==user_name,
+			User.email==user_name)).first()
+	
+		if not user:
+			return None
+		return user
+
 	def __repr__(self):
 		return '<User %r>' % (self.nickname)
 
@@ -21,3 +43,5 @@ class Post(db.Model):
 
 	def __repr__(self):
 		return '<Post %r>' % (self.body)
+
+
